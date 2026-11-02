@@ -18,6 +18,18 @@ El seeder carga cinco incidencias de ejemplo con historiales y comentarios coher
 
 Abrir <http://localhost:8000>. El código se monta desde el proyecto y MySQL persiste en `mysql_data`. Para iniciar Vite cuando se integre el frontend, instalar las dependencias npm y ejecutar `npm run dev -- --host 0.0.0.0` dentro de `app`; el puerto 5173 está expuesto.
 
+## Pruebas del backend
+
+Las pruebas fuerzan MySQL en el servicio `db` y la base separada `optima_retail_test`, independientemente de los valores `DB_CONNECTION` y `DB_DATABASE` del entorno. Crear la base una vez y ejecutar la suite desde el contenedor:
+
+```sh
+docker compose exec -T db sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS optima_retail_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; GRANT ALL PRIVILEGES ON optima_retail_test.* TO '\''$MYSQL_USER'\''@'\''%'\'';"'
+docker compose exec app php artisan test
+docker compose exec app ./vendor/bin/pint --test
+```
+
+Las pruebas ejecutan migraciones y limpian sus datos únicamente en `optima_retail_test`. La conexión y el nombre de base se fijan en `phpunit.xml` y antes del arranque de la aplicación de pruebas; no se necesitan credenciales nuevas ni cambiar la configuración de producción.
+
 Detener sin borrar la base de datos:
 
 ```sh

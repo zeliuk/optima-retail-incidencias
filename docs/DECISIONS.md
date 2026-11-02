@@ -1,6 +1,6 @@
 # Decisiones técnicas — Panel operativo de incidencias
 
-Este documento recoge **decisiones propias del proyecto**, no requisitos adicionales del enunciado. El bloque 1 (inicialización de Laravel y Docker) está implementado y verificado; los bloques funcionales posteriores siguen pendientes. El PDF de la prueba es la referencia para los requisitos obligatorios.
+Este documento recoge **decisiones propias del proyecto**, no requisitos adicionales del enunciado. Los bloques 1 (inicialización), 2 (modelo de datos) y 3 (lógica de negocio) están implementados y verificados según el registro de `ai-process/README.md`. El PDF de la prueba es la referencia para los requisitos obligatorios.
 
 ## 1. Alcance y arquitectura
 
@@ -55,7 +55,7 @@ Las tres tablas se implementan con Eloquent e índices por estado/prioridad junt
 | En revisión | Resuelta |
 | Bloqueada | En revisión |
 
-`Resuelta` es estado final: **no habrá reapertura** en esta entrega. Cualquier transición no incluida se rechazará en backend. La regla queda centralizada en `IncidentStatus`; la actualización atómica y la escritura del log quedan para el bloque de acciones de negocio. La transición a bloqueada o resuelta requerirá confirmación en UI.
+`Resuelta` es estado final: **no habrá reapertura** en esta entrega. Cualquier transición no incluida se rechazará en backend. La regla queda centralizada en `IncidentStatus`; `ChangeIncidentStatus` bloquea la fila y ejecuta actualización y log en una transacción. La transición a bloqueada o resuelta requerirá confirmación en UI.
 
 El seeder normal genera cinco incidencias ficticias en los cuatro estados y varias prioridades, con comentarios y secuencias de logs de demostración válidas. Identifica cada ejemplo por su título estable y omite íntegramente los ya existentes; así las ejecuciones repetidas no duplican ni sobrescriben cambios. Si alguien renombra un ejemplo, el seeder ya no podrá reconocerlo. El actor para logs y comentarios se obtiene de `config/incident.php`. No crea cuentas de usuario ni prepara las inconsistencias del ejercicio de diagnóstico.
 
@@ -89,5 +89,6 @@ Implementar comando Artisan de diagnóstico con **dry-run por defecto** y modo e
 - Valores persistidos para estados y prioridades y estructura exacta de servicios/clases.
 - Identidad visual tras consultar la web oficial.
 - Procedimiento preciso para corregir duplicados preservando evidencia.
+- Integración Inertia: listado y detalle exponen temporalmente resultados JSON hasta su conexión a páginas Inertia en el bloque 4; no se añade una API separada.
 
 Registrar aquí únicamente decisiones cerradas o cambios justificados durante la implementación. Mantener separado lo planeado de lo ejecutado.
