@@ -11,7 +11,10 @@ docker compose run --rm --no-deps app composer install
 docker compose up -d
 docker compose exec app php artisan key:generate
 docker compose exec app php artisan migrate
+docker compose exec app php artisan db:seed
 ```
+
+El seeder carga cinco incidencias de ejemplo con historiales y comentarios coherentes, sin sobrescribir ejemplos ya existentes que conserve el seeder.
 
 Abrir <http://localhost:8000>. El código se monta desde el proyecto y MySQL persiste en `mysql_data`. Para iniciar Vite cuando se integre el frontend, instalar las dependencias npm y ejecutar `npm run dev -- --host 0.0.0.0` dentro de `app`; el puerto 5173 está expuesto.
 

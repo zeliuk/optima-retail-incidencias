@@ -38,13 +38,13 @@ Tecnologías previstas para integrar el frontend; **todavía no instaladas ni ve
 
 ## 3. Datos y reglas de negocio
 
-Tablas mínimas del enunciado:
+Tablas mínimas del enunciado (implementadas en el bloque 2):
 
 - `incidents`: `id`, `title`, `description`, `status`, `priority`, `requester_name`, `assigned_to`, `created_at`, `updated_at`.
 - `incident_logs`: `id`, `incident_id`, `action`, `old_value`, `new_value`, `user_name`, `metadata`, `created_at`.
 - `incident_comments`: `id`, `incident_id`, `author_name`, `body`, `created_at`, `updated_at`.
 
-Crear claves foráneas para logs y comentarios, e índices razonables para búsquedas por estado, prioridad y fecha. Centralizar estados (preferentemente mediante enum PHP); resolver sus valores persistidos al implementar el modelo, sin dispersar strings mágicos.
+Las tres tablas se implementan con Eloquent e índices por estado/prioridad junto con fecha. Las claves foráneas de logs y comentarios restringen el borrado de una incidencia para proteger la trazabilidad. Una migración posterior cambia las FK iniciales en cascada a `RESTRICT`; su reversión restaura el comportamiento inicial. Los estados se persisten como `abierta`, `en_revision`, `bloqueada` y `resuelta`; prioridades como `baja`, `media`, `alta` y `critica`. Los enums PHP `IncidentStatus` e `IncidentPriority` son la fuente central; el modelo castea ambos. `incident_logs.metadata` es JSON nullable y se castea a array. El modelo de log desactiva `updated_at`.
 
 ### Transiciones admitidas
 
@@ -55,7 +55,9 @@ Crear claves foráneas para logs y comentarios, e índices razonables para búsq
 | En revisión | Resuelta |
 | Bloqueada | En revisión |
 
-`Resuelta` es estado final: **no habrá reapertura** en esta entrega. Cualquier transición no incluida se rechazará en backend. La actualización del estado y el registro del log deben ser atómicos; conservar estado anterior, nuevo estado, actor y fecha. La transición a bloqueada o resuelta requerirá confirmación en UI.
+`Resuelta` es estado final: **no habrá reapertura** en esta entrega. Cualquier transición no incluida se rechazará en backend. La regla queda centralizada en `IncidentStatus`; la actualización atómica y la escritura del log quedan para el bloque de acciones de negocio. La transición a bloqueada o resuelta requerirá confirmación en UI.
+
+El seeder normal genera cinco incidencias ficticias en los cuatro estados y varias prioridades, con comentarios y secuencias de logs de demostración válidas. Identifica cada ejemplo por su título estable y omite íntegramente los ya existentes; así las ejecuciones repetidas no duplican ni sobrescriben cambios. Si alguien renombra un ejemplo, el seeder ya no podrá reconocerlo. El actor para logs y comentarios se obtiene de `config/incident.php`. No crea cuentas de usuario ni prepara las inconsistencias del ejercicio de diagnóstico.
 
 ## 4. Experiencia de uso
 
