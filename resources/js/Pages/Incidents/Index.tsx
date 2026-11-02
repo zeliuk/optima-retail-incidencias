@@ -1,5 +1,14 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
+import CreateIncidentForm from './CreateIncidentForm';
+import FiltersPanel from './FiltersPanel';
 import { EmptyState, Pagination, PriorityBadge, StatusBadge, StatusSummary, type Incident, type PaginationLink } from './components';
+
+type Filters = {
+    status: string;
+    priority: string;
+    search: string;
+};
 
 type IncidentPageProps = {
     incidents: {
@@ -9,6 +18,8 @@ type IncidentPageProps = {
         to: number | null;
         total: number;
     };
+    filters: Filters;
+    success: string | null;
 };
 
 function formatDate(value: string) {
@@ -73,8 +84,44 @@ function IncidentCard({ incident }: { incident: Incident }) {
     );
 }
 
-export default function Index({ incidents }: IncidentPageProps) {
+export default function Index({ incidents, filters: serverFilters, success }: IncidentPageProps) {
+    const [filters, setFilters] = useState(serverFilters);
+    const [search, setSearch] = useState(serverFilters.search);
+    const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const hasIncidents = incidents.data.length > 0;
+    const hasActiveFilters = Boolean(filters.status || filters.priority || filters.search || search.trim());
+
+    useEffect(() => {
+        setFilters(serverFilters);
+        setSearch(serverFilters.search);
+    }, [serverFilters.status, serverFilters.priority, serverFilters.search]);
+
+    function applyFilters(nextFilters: Filters) {
+        if (searchTimer.current) clearTimeout(searchTimer.current);
+        const params = Object.fromEntries(Object.entries(nextFilters).filter(([, value]) => value !== ''));
+        setFilters(nextFilters);
+        router.get('/incidents', params, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+            only: ['incidents', 'filters', 'success'],
+        });
+    }
+
+    useEffect(() => {
+        if (search.trim() === filters.search) return;
+        searchTimer.current = setTimeout(() => {
+            applyFilters({ ...filters, search: search.trim() });
+        }, 450);
+        return () => {
+            if (searchTimer.current) clearTimeout(searchTimer.current);
+        };
+    }, [search]);
+
+    function clearFilters() {
+        setSearch('');
+        applyFilters({ status: '', priority: '', search: '' });
+    }
 
     return (
         <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -108,7 +155,20 @@ export default function Index({ incidents }: IncidentPageProps) {
                     )}
                 </section>
 
-                <StatusSummary incidents={incidents.data} />
+                <>
+                    <p className="-mb-5 text-xs font-medium text-slate-500">Recuento por estado de la página visible</p>
+                    <StatusSummary incidents={incidents.data} />
+                </>
+
+                <FiltersPanel
+                    filters={filters}
+                    search={search}
+                    onSearchChange={setSearch}
+                    onFilterChange={(nextFilters) => applyFilters({ ...nextFilters, search: search.trim() })}
+                    onClear={clearFilters}
+                />
+
+                {success && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{success}</p>}
 
                 <section aria-labelledby="incident-list-title" className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex flex-col gap-1 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
@@ -119,7 +179,7 @@ export default function Index({ incidents }: IncidentPageProps) {
                         {hasIncidents && <span className="text-xs font-medium text-slate-400">Actualizado con los registros disponibles</span>}
                     </div>
 
-                    {!hasIncidents ? <EmptyState /> : (
+                    {!hasIncidents ? <EmptyState filtered={hasActiveFilters} /> : (
                         <>
                             <div className="hidden overflow-x-auto md:block">
                                 <table className="w-full min-w-[850px] text-left">
@@ -145,6 +205,8 @@ export default function Index({ incidents }: IncidentPageProps) {
                         </>
                     )}
                 </section>
+
+                <CreateIncidentForm />
 
                 <footer className="pb-2 text-center text-xs text-slate-400">Panel operativo · Entorno de demostración</footer>
             </div>

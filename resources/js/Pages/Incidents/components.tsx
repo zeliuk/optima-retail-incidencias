@@ -83,12 +83,14 @@ export function StatusSummary({ incidents }: { incidents: Incident[] }) {
     );
 }
 
-export function EmptyState() {
+export function EmptyState({ filtered = false }: { filtered?: boolean }) {
     return (
         <div className="px-6 py-16 text-center sm:py-20">
             <div aria-hidden="true" className="mx-auto grid size-12 place-items-center rounded-2xl bg-slate-100 text-xl text-slate-500">—</div>
-            <h3 className="mt-4 text-base font-semibold text-slate-900">Todavía no hay incidencias</h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">Cuando se registren incidencias, aparecerán aquí con su estado y prioridad.</p>
+            <h3 className="mt-4 text-base font-semibold text-slate-900">{filtered ? 'No hay resultados para estos filtros' : 'Todavía no hay incidencias'}</h3>
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">
+                {filtered ? 'Prueba a cambiar los criterios de búsqueda o limpia los filtros para ver más incidencias.' : 'Cuando se registren incidencias, aparecerán aquí con su estado y prioridad.'}
+            </p>
         </div>
     );
 }

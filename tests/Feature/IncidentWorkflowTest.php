@@ -39,11 +39,15 @@ class IncidentWorkflowTest extends TestCase
         $response->assertSessionHasNoErrors();
         $incident = Incident::firstOrFail();
         $this->assertSame(IncidentStatus::Open, $incident->status);
-        $response->assertRedirect(route('incidents.show', $incident));
+        $this->assertSame('Ana', $incident->requester_name);
+        $this->assertSame('Luis', $incident->assigned_to);
+        $response->assertRedirect(route('incidents.index'))
+            ->assertSessionHas('success', 'Incidencia creada correctamente.');
 
-        $this->from('/incidents')->post(route('incidents.store'), [])->assertRedirect('/incidents')->assertSessionHasErrors([
-            'title', 'description', 'priority', 'requester_name',
-        ]);
+        $this->from('/incidents')->post(route('incidents.store'), ['title' => 'Datos a conservar'])
+            ->assertRedirect('/incidents')->assertSessionHasErrors([
+                'description', 'priority', 'requester_name',
+            ])->assertSessionHas('_old_input.title', 'Datos a conservar');
         $this->assertDatabaseCount('incidents', 1);
     }
 
@@ -58,7 +62,35 @@ class IncidentWorkflowTest extends TestCase
             ->assertOk()->assertInertia(fn ($page) => $page
             ->component('Incidents/Index')
             ->where('incidents.data.0.title', 'Caja')
+            ->where('filters.status', 'abierta')
+            ->where('filters.priority', 'alta')
+            ->where('filters.search', 'roto')
             ->has('incidents.data', 1));
+    }
+
+    public function test_list_filters_individually_and_pagination_keeps_the_active_query(): void
+    {
+        for ($index = 1; $index <= 16; $index++) {
+            Incident::create([
+                'title' => "Caja {$index}", 'description' => 'Conexión inestable',
+                'status' => IncidentStatus::Open, 'priority' => IncidentPriority::High,
+                'requester_name' => 'Ana',
+            ]);
+        }
+        Incident::create(['title' => 'Caja resuelta', 'description' => 'Conexión estable',
+            'status' => IncidentStatus::Resolved, 'priority' => IncidentPriority::Low, 'requester_name' => 'Luis']);
+
+        $this->get('/incidents?status=abierta')->assertInertia(fn ($page) => $page
+            ->where('filters.status', 'abierta')->has('incidents.data', 15));
+        $this->get('/incidents?priority=baja')->assertInertia(fn ($page) => $page
+            ->where('filters.priority', 'baja')->has('incidents.data', 1));
+        $this->get('/incidents?search=resuelta')->assertInertia(fn ($page) => $page
+            ->where('filters.search', 'resuelta')->has('incidents.data', 1));
+
+        $this->get('/incidents?status=abierta&priority=alta&search=Caja&page=2')
+            ->assertInertia(fn ($page) => $page
+                ->where('incidents.current_page', 2)
+                ->where('incidents.links.0.url', url('/incidents?status=abierta&priority=alta&search=Caja&page=1')));
     }
 
     public function test_status_change_records_actor_and_rejects_invalid_or_repeated_transitions(): void

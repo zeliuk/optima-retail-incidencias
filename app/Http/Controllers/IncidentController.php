@@ -16,11 +16,16 @@ class IncidentController extends Controller
 {
     public function index(Request $request)
     {
-        $filters = $request->validate([
+        $validatedFilters = $request->validate([
             'status' => ['sometimes', 'nullable', Rule::enum(IncidentStatus::class)],
             'priority' => ['sometimes', 'nullable', Rule::enum(IncidentPriority::class)],
             'search' => ['sometimes', 'nullable', 'string', 'max:180'],
         ]);
+        $filters = [
+            'status' => $validatedFilters['status'] ?? '',
+            'priority' => $validatedFilters['priority'] ?? '',
+            'search' => $validatedFilters['search'] ?? '',
+        ];
 
         $incidents = Incident::query()
             ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
@@ -33,6 +38,8 @@ class IncidentController extends Controller
 
         return Inertia::render('Incidents/Index', [
             'incidents' => $incidents,
+            'filters' => $filters,
+            'success' => fn () => $request->session()->get('success'),
         ]);
     }
 
@@ -40,7 +47,7 @@ class IncidentController extends Controller
     {
         $incident = Incident::create($request->validated() + ['status' => IncidentStatus::Open]);
 
-        return redirect()->route('incidents.show', $incident)->with('success', 'Incidencia creada.');
+        return redirect()->route('incidents.index')->with('success', 'Incidencia creada correctamente.');
     }
 
     public function show(Incident $incident)
