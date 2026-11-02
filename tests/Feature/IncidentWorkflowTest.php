@@ -155,10 +155,36 @@ class IncidentWorkflowTest extends TestCase
 
         $incident->logs()->create(['action' => 'status_changed', 'old_value' => 'abierta', 'new_value' => 'en_revision', 'user_name' => 'Carlos Turmo']);
         $incident->logs()->create(['action' => 'status_changed', 'old_value' => 'en_revision', 'new_value' => 'bloqueada', 'user_name' => 'Carlos Turmo']);
-        $this->get(route('incidents.show', $incident))->assertOk()
-            ->assertJsonPath('logs.0.new_value', 'en_revision')->assertJsonPath('logs.1.new_value', 'bloqueada')
-            ->assertJsonPath('comments.0.body', 'Comentario anterior')
-            ->assertJsonPath('comments.1.body', 'Comentario posterior')
-            ->assertJsonPath('comments.2.body', 'Lo reviso');
+        $this->get(route('incidents.show', $incident).'?return='.urlencode('/incidents?status=abierta&page=2'))
+            ->assertOk()->assertInertia(fn ($page) => $page
+            ->component('Incidents/Show')
+            ->where('incident.id', $incident->id)
+            ->where('incident.title', 'Caja')
+            ->where('incident.status', 'abierta')
+            ->where('incident.priority', 'alta')
+            ->where('logs.0.new_value', 'en_revision')
+            ->where('logs.1.new_value', 'bloqueada')
+            ->where('comments.0.body', 'Comentario anterior')
+            ->where('comments.1.body', 'Comentario posterior')
+            ->where('comments.2.body', 'Lo reviso')
+            ->where('returnUrl', '/incidents?status=abierta&page=2'));
+    }
+
+    public function test_comment_validation_preserves_the_submitted_body_and_does_not_create_a_comment(): void
+    {
+        $incident = Incident::create(['title' => 'Caja', 'description' => 'Error', 'status' => IncidentStatus::Open,
+            'priority' => IncidentPriority::High, 'requester_name' => 'Ana']);
+
+        $this->from(route('incidents.show', $incident))->post(route('incident-comments.store'), [
+            'incident_id' => $incident->id, 'body' => '',
+        ])->assertRedirect(route('incidents.show', $incident))
+            ->assertSessionHasErrors('body')->assertSessionHas('_old_input.body', '');
+
+        $this->assertDatabaseCount('incident_comments', 0);
+    }
+
+    public function test_incident_detail_returns_not_found_for_unknown_incident(): void
+    {
+        $this->get('/incidents/999999')->assertNotFound();
     }
 }

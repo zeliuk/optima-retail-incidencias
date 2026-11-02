@@ -16,6 +16,6 @@ class IncidentCommentController extends Controller
             'author_name' => config('incident.actor_name'),
         ]);
 
-        return back()->with('success', 'Comentario añadido.');
+        return redirect()->route('incidents.show', $incident)->with('success', 'Comentario añadido.');
     }
 }

@@ -26,6 +26,11 @@ function formatDate(value: string) {
     return new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value));
 }
 
+function detailUrl(id: number) {
+    const query = window.location.search;
+    return `/incidents/${id}${query ? `?return=${encodeURIComponent(`/incidents${query}`)}` : ''}`;
+}
+
 function IncidentRow({ incident }: { incident: Incident }) {
     const contact = incident.assigned_to || incident.requester_name;
     const contactLabel = incident.assigned_to ? 'Responsable' : 'Solicitante';
@@ -34,7 +39,7 @@ function IncidentRow({ incident }: { incident: Incident }) {
         <tr className="group transition hover:bg-slate-50/80">
             <td className="px-6 py-4">
                 <div className="max-w-lg">
-                    <Link href={`/incidents/${incident.id}`} className="font-semibold text-slate-900 decoration-indigo-400 underline-offset-4 hover:text-indigo-700 hover:underline">
+                    <Link href={detailUrl(incident.id)} className="font-semibold text-slate-900 decoration-indigo-400 underline-offset-4 hover:text-indigo-700 hover:underline">
                         {incident.title}
                     </Link>
                     <p className="mt-1 text-xs text-slate-400">INC-{String(incident.id).padStart(4, '0')}</p>
@@ -48,7 +53,7 @@ function IncidentRow({ incident }: { incident: Incident }) {
                 <p className="mt-0.5 text-xs text-slate-400">{contact ? contactLabel : 'Responsable'}</p>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-right">
-                <Link href={`/incidents/${incident.id}`} className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-700 hover:text-indigo-900">
+                <Link href={detailUrl(incident.id)} className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-700 hover:text-indigo-900">
                     Ver detalle <span aria-hidden="true">→</span>
                 </Link>
             </td>
@@ -67,7 +72,7 @@ function IncidentCard({ incident }: { incident: Incident }) {
                 <StatusBadge status={incident.status} />
             </div>
             <h3 className="mt-3 font-semibold leading-6 text-slate-900">
-                <Link href={`/incidents/${incident.id}`} className="hover:text-indigo-700">{incident.title}</Link>
+                <Link href={detailUrl(incident.id)} className="hover:text-indigo-700">{incident.title}</Link>
             </h3>
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <PriorityBadge priority={incident.priority} />
@@ -78,7 +83,7 @@ function IncidentCard({ incident }: { incident: Incident }) {
                     <p className="text-sm font-medium text-slate-700">{contact || 'Sin asignar'}</p>
                     <p className="text-xs text-slate-400">{contact ? contactLabel : 'Responsable'}</p>
                 </div>
-                <Link href={`/incidents/${incident.id}`} className="text-sm font-semibold text-indigo-700">Ver detalle <span aria-hidden="true">→</span></Link>
+                <Link href={detailUrl(incident.id)} className="text-sm font-semibold text-indigo-700">Ver detalle <span aria-hidden="true">→</span></Link>
             </div>
         </article>
     );

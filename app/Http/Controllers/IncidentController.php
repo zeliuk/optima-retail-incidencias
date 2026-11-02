@@ -50,15 +50,25 @@ class IncidentController extends Controller
         return redirect()->route('incidents.index')->with('success', 'Incidencia creada correctamente.');
     }
 
-    public function show(Incident $incident)
+    public function show(Incident $incident, Request $request)
     {
         $incident->load([
             'logs' => fn ($query) => $query->orderBy('created_at')->orderBy('id'),
             'comments' => fn ($query) => $query->orderBy('created_at')->orderBy('id'),
         ]);
 
-        // Inertia is introduced in the next block; keep this route's payload ready for that page.
-        return response()->json($incident);
+        $returnUrl = $request->query('return', route('incidents.index'));
+        if (! is_string($returnUrl) || ! str_starts_with($returnUrl, '/incidents') || str_starts_with($returnUrl, '//')) {
+            $returnUrl = route('incidents.index');
+        }
+
+        return Inertia::render('Incidents/Show', [
+            'incident' => $incident,
+            'logs' => $incident->logs,
+            'comments' => $incident->comments,
+            'success' => fn () => $request->session()->get('success'),
+            'returnUrl' => $returnUrl,
+        ]);
     }
 
     public function updateStatus(UpdateIncidentStatusRequest $request, Incident $incident, ChangeIncidentStatus $changeStatus)
