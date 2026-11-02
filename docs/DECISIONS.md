@@ -67,6 +67,7 @@ El seeder normal genera cinco incidencias ficticias en los cuatro estados y vari
 - Filtros por estado, prioridad y texto libre; filtro de estado sin recarga completa mediante Inertia.
 - Contadores por estado y confirmación antes de bloquear o resolver. Son las mejoras de interacción escogidas para cumplir el mínimo del ejercicio; no ampliar el frontend sin necesidad.
 - Historial de cambios y comentarios accesibles por incidencia; validaciones y errores claros.
+- La interfaz muestra en español también los mensajes de validación que Laravel comparte con React. `APP_LOCALE` y `APP_FALLBACK_LOCALE` usan `es`, con los textos correspondientes versionados en `lang/es/validation.php`.
 
 ## 5. Diagnóstico de inconsistencias
 
@@ -91,6 +92,6 @@ Implementar comando Artisan de diagnóstico con **dry-run por defecto** y modo e
 - Valores persistidos para estados y prioridades y estructura exacta de servicios/clases.
 - Identidad visual tras consultar la web oficial.
 - Procedimiento preciso para corregir duplicados preservando evidencia.
-- Integración Inertia (bloque 4.1): el listado (`/` y `/incidents`) se entrega como la página mínima `Incidents/Index`; el detalle continúa como JSON hasta su bloque de interfaz. No se añade una API separada. `npm ci`, TypeScript y la compilación Vite se verificaron en Docker con Node 24.22.2. La respuesta del listado fue HTTP 200 y los tests verifican props filtradas con datos de prueba. La base de desarrollo no contiene incidencias (0); no se cargaron datos ni se ejecutaron seeders. Suite completa: 14 tests y 73 aserciones; Pint aprobado.
+- La revisión visual manual del listado y el detalle en navegador sigue pendiente. La integración Inertia del listado y del detalle está implementada; no se añadió una API separada.
 
 Registrar aquí únicamente decisiones cerradas o cambios justificados durante la implementación. Mantener separado lo planeado de lo ejecutado.

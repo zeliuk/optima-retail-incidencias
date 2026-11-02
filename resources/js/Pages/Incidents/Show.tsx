@@ -81,7 +81,7 @@ export default function Show({ incident, logs, comments, success, returnUrl, sta
 
                 <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs font-medium text-slate-400">INC-{String(incident.id).padStart(4, '0')}</span>
+                        <span className="text-xs font-medium text-slate-500">INC-{String(incident.id).padStart(4, '0')}</span>
                         <StatusBadge status={incident.status} />
                         <PriorityBadge priority={incident.priority} />
                     </div>
@@ -133,7 +133,7 @@ export default function Show({ incident, logs, comments, success, returnUrl, sta
                         </form>
                     </section>
                 </div>
-                <footer className="pb-2 text-center text-xs text-slate-400">Panel operativo · Entorno de demostración</footer>
+                <footer className="pb-2 text-center text-xs text-slate-600">Panel operativo · Entorno de demostración</footer>
             </div>
         </main>
     );

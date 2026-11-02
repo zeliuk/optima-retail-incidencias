@@ -12,7 +12,7 @@ type FiltersPanelProps = {
     onClear: () => void;
 };
 
-const fieldClassName = 'mt-1.5 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15';
+const fieldClassName = 'mt-1.5 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15';
 
 export default function FiltersPanel({ filters, search, onSearchChange, onFilterChange, onClear }: FiltersPanelProps) {
     const hasFilters = Boolean(filters.status || filters.priority || search);

@@ -17,8 +17,8 @@ const initialValues: IncidentForm = {
     assigned_to: '',
 };
 
-const inputClassName = 'mt-1.5 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15';
-const textareaClassName = 'mt-1.5 min-h-28 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15';
+const inputClassName = 'mt-1.5 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15';
+const textareaClassName = 'mt-1.5 min-h-28 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15';
 
 export default function CreateIncidentForm() {
     const form = useForm<IncidentForm>(initialValues);
@@ -71,7 +71,7 @@ export default function CreateIncidentForm() {
                         {fieldError('requester_name')}
                     </label>
                     <label htmlFor="assigned_to" className="text-sm font-medium text-slate-700 sm:col-span-2">
-                        Responsable <span className="font-normal text-slate-400">(opcional)</span>
+                        Responsable <span className="font-normal text-slate-500">(opcional)</span>
                         <input id="assigned_to" name="assigned_to" maxLength={120} value={form.data.assigned_to} onChange={(event) => form.setData('assigned_to', event.target.value)} aria-invalid={Boolean(form.errors.assigned_to)} aria-describedby={form.errors.assigned_to ? 'assigned_to-error' : undefined} className={inputClassName} placeholder="Persona responsable, si se conoce" />
                         {fieldError('assigned_to')}
                     </label>

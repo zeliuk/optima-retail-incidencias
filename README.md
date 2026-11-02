@@ -16,7 +16,9 @@ docker compose exec app php artisan db:seed
 
 El seeder carga cinco incidencias de ejemplo con historiales y comentarios coherentes, sin sobrescribir ejemplos ya existentes que conserve el seeder.
 
-Abrir <http://localhost:8000>. El código se monta desde el proyecto y MySQL persiste en `mysql_data`. Para iniciar Vite cuando se integre el frontend, instalar las dependencias npm y ejecutar `npm run dev -- --host 0.0.0.0` dentro de `app`; el puerto 5173 está expuesto.
+Abrir <http://localhost:8000>. El código se monta desde el proyecto y MySQL persiste en `mysql_data`. Para servir los cambios del frontend durante el desarrollo, ejecutar `npm ci` una vez dentro de `app` y luego `npm run dev -- --host 0.0.0.0`; el puerto 5173 está expuesto.
+
+La interfaz y los mensajes de validación del servidor están en español. Laravel usa `APP_LOCALE=es` y las traducciones de validación versionadas en `lang/es/validation.php`; se pueden cambiar mediante `APP_LOCALE` y `APP_FALLBACK_LOCALE` en `.env`.
 
 ## Pruebas del backend
 

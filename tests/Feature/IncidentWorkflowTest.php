@@ -46,7 +46,9 @@ class IncidentWorkflowTest extends TestCase
 
         $this->from('/incidents')->post(route('incidents.store'), ['title' => 'Datos a conservar'])
             ->assertRedirect('/incidents')->assertSessionHasErrors([
-                'description', 'priority', 'requester_name',
+                'description' => 'El campo descripción es obligatorio.',
+                'priority' => 'El campo prioridad es obligatorio.',
+                'requester_name' => 'El campo nombre del solicitante es obligatorio.',
             ])->assertSessionHas('_old_input.title', 'Datos a conservar');
         $this->assertDatabaseCount('incidents', 1);
     }
@@ -114,7 +116,8 @@ class IncidentWorkflowTest extends TestCase
             ->where('statusActions.1.value', 'resuelta')
             ->where('statusActions.1.confirmation', '¿Quieres marcar esta incidencia como resuelta?'));
         $this->from('/incidents')->patch(route('incidents.status.update', $incident), ['status' => 'en_revision'])
-            ->assertRedirect('/incidents')->assertSessionHasErrors('status');
+            ->assertRedirect('/incidents')
+            ->assertSessionHasErrors(['status' => 'La transición solicitada no está permitida.']);
         $this->assertDatabaseCount('incident_logs', 1);
         $this->assertSame(IncidentStatus::InReview, $incident->fresh()->status);
     }
@@ -144,6 +147,30 @@ class IncidentWorkflowTest extends TestCase
 
         $this->assertSame(IncidentStatus::Open, $incident->fresh()->status);
         $this->assertDatabaseCount('incident_logs', 0);
+    }
+
+    public function test_invalid_status_value_uses_spanish_validation_message(): void
+    {
+        $incident = Incident::create(['title' => 'Caja', 'description' => 'Error', 'status' => IncidentStatus::Open,
+            'priority' => IncidentPriority::High, 'requester_name' => 'Ana']);
+
+        $this->from(route('incidents.show', $incident))
+            ->patch(route('incidents.status.update', $incident), ['status' => 'archivada'])
+            ->assertRedirect(route('incidents.show', $incident))
+            ->assertSessionHasErrors(['status' => 'El estado seleccionado no es válido.']);
+
+        $this->assertSame(IncidentStatus::Open, $incident->fresh()->status);
+        $this->assertDatabaseCount('incident_logs', 0);
+    }
+
+    public function test_validation_messages_display_in_spanish_on_frontend_flows(): void
+    {
+        $this->from('/incidents')->post(route('incidents.store'), [
+            'title' => str_repeat('a', 181), 'description' => 'Descripción', 'priority' => 'media',
+            'requester_name' => 'Ana',
+        ])->assertSessionHasErrors([
+            'title' => 'El campo título no debe superar los 180 caracteres.',
+        ]);
     }
 
     public function test_failed_log_write_rolls_back_status_change(): void
@@ -205,7 +232,8 @@ class IncidentWorkflowTest extends TestCase
         $this->from(route('incidents.show', $incident))->post(route('incident-comments.store'), [
             'incident_id' => $incident->id, 'body' => '',
         ])->assertRedirect(route('incidents.show', $incident))
-            ->assertSessionHasErrors('body')->assertSessionHas('_old_input.body', '');
+            ->assertSessionHasErrors(['body' => 'El campo comentario es obligatorio.'])
+            ->assertSessionHas('_old_input.body', '');
 
         $this->assertDatabaseCount('incident_comments', 0);
     }

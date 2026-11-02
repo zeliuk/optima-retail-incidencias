@@ -42,7 +42,7 @@ function IncidentRow({ incident }: { incident: Incident }) {
                     <Link href={detailUrl(incident.id)} className="font-semibold text-slate-900 decoration-indigo-400 underline-offset-4 hover:text-indigo-700 hover:underline">
                         {incident.title}
                     </Link>
-                    <p className="mt-1 text-xs text-slate-400">INC-{String(incident.id).padStart(4, '0')}</p>
+                    <p className="mt-1 text-xs text-slate-500">INC-{String(incident.id).padStart(4, '0')}</p>
                 </div>
             </td>
             <td className="px-6 py-4"><PriorityBadge priority={incident.priority} /></td>
@@ -50,7 +50,7 @@ function IncidentRow({ incident }: { incident: Incident }) {
             <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">{formatDate(incident.created_at)}</td>
             <td className="px-6 py-4">
                 <p className="text-sm font-medium text-slate-700">{contact || 'Sin asignar'}</p>
-                <p className="mt-0.5 text-xs text-slate-400">{contact ? contactLabel : 'Responsable'}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{contact ? contactLabel : 'Responsable'}</p>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-right">
                 <Link href={detailUrl(incident.id)} className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-700 hover:text-indigo-900">
@@ -68,7 +68,7 @@ function IncidentCard({ incident }: { incident: Incident }) {
     return (
         <article className="p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-xs font-medium text-slate-400">INC-{String(incident.id).padStart(4, '0')}</span>
+                <span className="text-xs font-medium text-slate-500">INC-{String(incident.id).padStart(4, '0')}</span>
                 <StatusBadge status={incident.status} />
             </div>
             <h3 className="mt-3 font-semibold leading-6 text-slate-900">
@@ -81,7 +81,7 @@ function IncidentCard({ incident }: { incident: Incident }) {
             <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
                 <div>
                     <p className="text-sm font-medium text-slate-700">{contact || 'Sin asignar'}</p>
-                    <p className="text-xs text-slate-400">{contact ? contactLabel : 'Responsable'}</p>
+                    <p className="text-xs text-slate-500">{contact ? contactLabel : 'Responsable'}</p>
                 </div>
                 <Link href={detailUrl(incident.id)} className="text-sm font-semibold text-indigo-700">Ver detalle <span aria-hidden="true">→</span></Link>
             </div>
@@ -160,10 +160,10 @@ export default function Index({ incidents, filters: serverFilters, success }: In
                     )}
                 </section>
 
-                <>
-                    <p className="-mb-5 text-xs font-medium text-slate-500">Recuento por estado de la página visible</p>
+                <div className="space-y-2">
+                    <p className="text-xs font-medium text-slate-500">Recuento por estado de la página visible</p>
                     <StatusSummary incidents={incidents.data} />
-                </>
+                </div>
 
                 <FiltersPanel
                     filters={filters}
@@ -181,7 +181,7 @@ export default function Index({ incidents, filters: serverFilters, success }: In
                             <h2 id="incident-list-title" className="font-semibold text-slate-900">Listado de incidencias</h2>
                             <p className="mt-1 text-sm text-slate-500">Prioridad, estado y persona de contacto</p>
                         </div>
-                        {hasIncidents && <span className="text-xs font-medium text-slate-400">Actualizado con los registros disponibles</span>}
+                        {hasIncidents && <span className="text-xs font-medium text-slate-500">Actualizado con los registros disponibles</span>}
                     </div>
 
                     {!hasIncidents ? <EmptyState filtered={hasActiveFilters} /> : (
@@ -213,7 +213,7 @@ export default function Index({ incidents, filters: serverFilters, success }: In
 
                 <CreateIncidentForm />
 
-                <footer className="pb-2 text-center text-xs text-slate-400">Panel operativo · Entorno de demostración</footer>
+                <footer className="pb-2 text-center text-xs text-slate-600">Panel operativo · Entorno de demostración</footer>
             </div>
         </main>
     );
