@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateIncidentStatusRequest;
 use App\Models\Incident;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class IncidentController extends Controller
 {
@@ -30,7 +31,9 @@ class IncidentController extends Controller
             })
             ->orderByDesc('created_at')->orderByDesc('id')->paginate(15)->withQueryString();
 
-        return response()->json($incidents);
+        return Inertia::render('Incidents/Index', [
+            'incidents' => $incidents,
+        ]);
     }
 
     public function store(StoreIncidentRequest $request)

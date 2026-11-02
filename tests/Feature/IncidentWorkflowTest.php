@@ -55,7 +55,10 @@ class IncidentWorkflowTest extends TestCase
             'priority' => IncidentPriority::Low, 'requester_name' => 'Luis']);
 
         $this->get('/incidents?status=abierta&priority=alta&search=roto')
-            ->assertOk()->assertJsonPath('data.0.title', 'Caja')->assertJsonCount(1, 'data');
+            ->assertOk()->assertInertia(fn ($page) => $page
+            ->component('Incidents/Index')
+            ->where('incidents.data.0.title', 'Caja')
+            ->has('incidents.data', 1));
     }
 
     public function test_status_change_records_actor_and_rejects_invalid_or_repeated_transitions(): void

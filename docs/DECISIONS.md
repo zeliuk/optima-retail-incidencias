@@ -22,17 +22,19 @@ Versiones comprobadas en el contenedor durante el bloque inicial (2 de noviembre
 | Node.js | 24.22.2 LTS |
 | npm | 11.19.1 |
 
-Tecnologías previstas para integrar el frontend; **todavía no instaladas ni verificadas**:
+Dependencias frontend instaladas y verificadas en Docker durante el bloque 4.1:
 
-| Tecnología | Versión prevista |
+| Tecnología | Versión fijada en lock |
 | --- | --- |
-| Inertia | 3 |
-| React | 19 |
-| Tailwind CSS | 4 |
-| TypeScript | Compatible con las dependencias que se instalen |
+| Adaptador Laravel de Inertia | 3.7.0 |
+| Adaptador React de Inertia | 3.11.0 |
+| React / React DOM | 19.3.1 |
+| Tailwind CSS | 4.3.3 |
+| TypeScript | 5.9.3 |
+| Vite | 8.3.5 |
 
 - Laravel limpio, sin starter kit de autenticación.
-- Docker Compose con **dos servicios**, aplicación y base de datos; persistencia MySQL en `mysql_data`, código montado desde el Mac y PHP servido por `artisan serve`. El contenedor espera a MySQL antes de servir Laravel. Vite queda preparado con el puerto 5173 expuesto y `host: 0.0.0.0`; HMR aún no se ha verificado.
+- Docker Compose con **dos servicios**, aplicación y base de datos; persistencia MySQL en `mysql_data`, código montado desde el Mac y PHP servido por `artisan serve`. El contenedor espera a MySQL antes de servir Laravel. Vite usa el puerto 5173 y `host: 0.0.0.0`; se verificaron el cliente, los módulos React transformados y el handshake WebSocket HMR. No se hizo comprobación visual en navegador.
 - El uso de Docker es una elección nuestra: el PDF no lo exige.
 - Diseño limpio, responsive y próximo a la identidad de Optima Retail. Verificar en `https://optimaretail.eu/` los activos y referencias visuales antes de adoptar logos, colores o tipografías. No afirmar que la identidad ya se ha comprobado.
 
@@ -85,10 +87,10 @@ Implementar comando Artisan de diagnóstico con **dry-run por defecto** y modo e
 
 ## 7. Pendiente de validar
 
-- Configuración definitiva de Vite/React al integrar el frontend.
+- Revisión visual manual de la página mínima en navegador.
 - Valores persistidos para estados y prioridades y estructura exacta de servicios/clases.
 - Identidad visual tras consultar la web oficial.
 - Procedimiento preciso para corregir duplicados preservando evidencia.
-- Integración Inertia: listado y detalle exponen temporalmente resultados JSON hasta su conexión a páginas Inertia en el bloque 4; no se añade una API separada.
+- Integración Inertia (bloque 4.1): el listado (`/` y `/incidents`) se entrega como la página mínima `Incidents/Index`; el detalle continúa como JSON hasta su bloque de interfaz. No se añade una API separada. `npm ci`, TypeScript y la compilación Vite se verificaron en Docker con Node 24.22.2. La respuesta del listado fue HTTP 200 y los tests verifican props filtradas con datos de prueba. La base de desarrollo no contiene incidencias (0); no se cargaron datos ni se ejecutaron seeders. Suite completa: 14 tests y 73 aserciones; Pint aprobado.
 
 Registrar aquí únicamente decisiones cerradas o cambios justificados durante la implementación. Mantener separado lo planeado de lo ejecutado.
