@@ -66,6 +66,15 @@ class IncidentController extends Controller
             'incident' => $incident,
             'logs' => $incident->logs,
             'comments' => $incident->comments,
+            'statusActions' => array_map(fn (IncidentStatus $status) => [
+                'value' => $status->value,
+                'label' => $status->label(),
+                'confirmation' => match ($status) {
+                    IncidentStatus::Blocked => '¿Quieres bloquear esta incidencia?',
+                    IncidentStatus::Resolved => '¿Quieres marcar esta incidencia como resuelta?',
+                    default => null,
+                },
+            ], $incident->status->allowedTransitions()),
             'success' => fn () => $request->session()->get('success'),
             'returnUrl' => $returnUrl,
         ]);

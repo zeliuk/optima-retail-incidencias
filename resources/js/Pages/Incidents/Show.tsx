@@ -1,6 +1,7 @@
 import { Link, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { PriorityBadge, StatusBadge } from './components';
+import StatusActions, { type StatusAction } from './StatusActions';
 
 type Incident = {
     id: number;
@@ -36,6 +37,8 @@ type Props = {
     comments: Comment[];
     success: string | null;
     returnUrl: string;
+    statusActions: StatusAction[];
+    errors?: { status?: string };
 };
 
 const statusLabels: Record<string, string> = {
@@ -48,7 +51,7 @@ function formatDate(value: string) {
     }).format(new Date(value));
 }
 
-export default function Show({ incident, logs, comments, success, returnUrl }: Props) {
+export default function Show({ incident, logs, comments, success, returnUrl, statusActions, errors }: Props) {
     const form = useForm({ incident_id: incident.id, body: '' });
 
     function submit(event: FormEvent<HTMLFormElement>) {
@@ -91,6 +94,8 @@ export default function Show({ incident, logs, comments, success, returnUrl }: P
                         <div><dt className="text-slate-500">Última actualización</dt><dd className="mt-1 font-medium"><time dateTime={incident.updated_at}>{formatDate(incident.updated_at)}</time></dd></div>
                     </dl>
                 </section>
+
+                <StatusActions incidentId={incident.id} actions={statusActions} error={errors?.status} />
 
                 <div className="grid items-start gap-6 lg:grid-cols-2">
                     <section aria-labelledby="history-title" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">

@@ -9,6 +9,16 @@ enum IncidentStatus: string
     case Blocked = 'bloqueada';
     case Resolved = 'resuelta';
 
+    public function label(): string
+    {
+        return match ($this) {
+            self::Open => 'Abierta',
+            self::InReview => 'En revisión',
+            self::Blocked => 'Bloqueada',
+            self::Resolved => 'Resuelta',
+        };
+    }
+
     /** @return list<self> */
     public function allowedTransitions(): array
     {

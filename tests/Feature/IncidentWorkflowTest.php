@@ -98,13 +98,40 @@ class IncidentWorkflowTest extends TestCase
         $incident = Incident::create(['title' => 'Caja', 'description' => 'Error', 'status' => IncidentStatus::Open,
             'priority' => IncidentPriority::High, 'requester_name' => 'Ana']);
 
-        $this->patch(route('incidents.status.update', $incident), ['status' => 'en_revision'])->assertRedirect();
+        $this->from(route('incidents.show', $incident))->patch(route('incidents.status.update', $incident), ['status' => 'en_revision'])
+            ->assertRedirect(route('incidents.show', $incident))->assertSessionHas('success', 'Estado actualizado.');
         $this->assertDatabaseHas('incident_logs', ['incident_id' => $incident->id, 'action' => 'status_changed',
             'old_value' => 'abierta', 'new_value' => 'en_revision', 'user_name' => 'Carlos Turmo']);
+        $this->assertDatabaseCount('incident_logs', 1);
+        $this->get(route('incidents.show', $incident))->assertInertia(fn ($page) => $page
+            ->component('Incidents/Show')
+            ->where('incident.status', 'en_revision')
+            ->where('logs.0.old_value', 'abierta')
+            ->where('logs.0.new_value', 'en_revision')
+            ->where('logs.0.user_name', 'Carlos Turmo')
+            ->where('statusActions.0.value', 'bloqueada')
+            ->where('statusActions.0.confirmation', '¿Quieres bloquear esta incidencia?')
+            ->where('statusActions.1.value', 'resuelta')
+            ->where('statusActions.1.confirmation', '¿Quieres marcar esta incidencia como resuelta?'));
         $this->from('/incidents')->patch(route('incidents.status.update', $incident), ['status' => 'en_revision'])
             ->assertRedirect('/incidents')->assertSessionHasErrors('status');
         $this->assertDatabaseCount('incident_logs', 1);
         $this->assertSame(IncidentStatus::InReview, $incident->fresh()->status);
+    }
+
+    public function test_detail_only_receives_allowed_status_actions_and_resolved_has_none(): void
+    {
+        $openIncident = Incident::create(['title' => 'Abierta', 'description' => 'Error', 'status' => IncidentStatus::Open,
+            'priority' => IncidentPriority::High, 'requester_name' => 'Ana']);
+        $this->get(route('incidents.show', $openIncident))->assertInertia(fn ($page) => $page
+            ->where('statusActions.0.value', 'en_revision')
+            ->where('statusActions.0.label', 'En revisión')
+            ->has('statusActions', 1));
+
+        $resolvedIncident = Incident::create(['title' => 'Resuelta', 'description' => 'Reparada', 'status' => IncidentStatus::Resolved,
+            'priority' => IncidentPriority::Low, 'requester_name' => 'Luis']);
+        $this->get(route('incidents.show', $resolvedIncident))->assertInertia(fn ($page) => $page
+            ->has('statusActions', 0));
     }
 
     public function test_open_incident_cannot_be_resolved_directly_and_creates_no_log(): void
