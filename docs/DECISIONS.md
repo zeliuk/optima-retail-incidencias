@@ -71,13 +71,13 @@ El seeder normal genera cinco incidencias ficticias en los cuatro estados y vari
 
 ## 5. Diagnóstico de inconsistencias
 
-Preparar datos reproducibles que incluyan los tres casos del enunciado:
+El seeder de diagnóstico prepara datos reproducibles que incluyen los tres casos del enunciado:
 
 1. **Incidencia resuelta sin log de resolución:** detectar y enviar a revisión manual. No inventar la fecha ni la acción histórica.
 2. **Estado actual distinto del último log de estado:** detectar y enviar a revisión manual. No asumir qué dato prevalece.
-3. **Log duplicado o incoherente:** detectar; solo permitir una reparación controlada si el duplicado es inequívoco y se conserva evidencia de la corrección.
+3. **Log duplicado o incoherente:** detectar duplicados exactos y estados inválidos o secuencias discontinuas; derivar a revisión manual.
 
-Implementar comando Artisan de diagnóstico con **dry-run por defecto** y modo explícito de corrección para casos seguros. Describir la consulta SQL o Eloquent y por qué detecta cada anomalía. Definir el mecanismo concreto de reparación y preservación de evidencia cuando se implemente, no antes.
+El comando Artisan `incidents:diagnose-consistency` es exclusivamente de lectura: no necesita `--dry-run` ni ofrece modo de corrección. Eloquent inspecciona los logs `status_changed` ordenados por fecha e ID, compara el estado actual con el último destino, valida estados y continuidad, y agrupa logs con coincidencia exacta en transición, actor y fecha. Las alertas requieren revisión manual. No se automatiza reparación porque no hay evidencia suficiente para reconstruir eventos, decidir qué valor es correcto o confirmar el origen de logs parecidos; tampoco existe un identificador de evento o petición.
 
 ## 6. Calidad, documentación y Git
 
@@ -89,9 +89,9 @@ Implementar comando Artisan de diagnóstico con **dry-run por defecto** y modo e
 ## 7. Pendiente de validar
 
 - Revisión visual manual de la página mínima en navegador.
-- Valores persistidos para estados y prioridades y estructura exacta de servicios/clases.
+- Estructura exacta de servicios/clases.
 - Identidad visual tras consultar la web oficial.
-- Procedimiento preciso para corregir duplicados preservando evidencia.
+- Procedimiento preciso para corregir inconsistencias preservando evidencia externa.
 - La revisión visual manual del listado y el detalle en navegador sigue pendiente. La integración Inertia del listado y del detalle está implementada; no se añadió una API separada.
 
 Registrar aquí únicamente decisiones cerradas o cambios justificados durante la implementación. Mantener separado lo planeado de lo ejecutado.
