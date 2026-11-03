@@ -63,23 +63,23 @@ export default function Show({ incident, logs, comments, success, returnUrl, sta
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 text-slate-900">
-            <header className="border-b border-slate-200 bg-white">
-                <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-                    <div className="flex items-center gap-3">
-                        <div aria-hidden="true" className="grid size-11 place-items-center rounded-xl bg-indigo-700 text-sm font-bold text-white shadow-sm">OR</div>
-                        <div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">Optima Retail</p><p className="mt-0.5 text-lg font-semibold">Panel operativo de incidencias</p></div>
+        <main className="min-h-screen bg-white text-slate-900">
+            <header className="bg-gradient-to-b from-white via-white/95 to-transparent pt-2 pb-3 md:sticky md:top-0 md:z-30">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex min-h-[67px] items-center rounded-full bg-[#f6f6f6] px-5 py-2.5 sm:px-[35px]">
+                        <Link href="/incidents" aria-label="Ir al listado de incidencias" className="inline-flex rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary">
+                            <img src="/images/optima-retail-logo.svg" alt="" className="h-auto w-[250px] max-w-full shrink-0" />
+                        </Link>
                     </div>
-                    <span className="self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 sm:self-auto">Carlos Turmo · Demo</span>
                 </div>
             </header>
 
             <div className="mx-auto max-w-7xl space-y-6 px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
-                <Link href={returnUrl} className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-700 hover:text-indigo-900">← Volver al listado</Link>
+                <Link href={returnUrl} className="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-secondary">← Volver al listado</Link>
 
                 {success && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{success}</p>}
 
-                <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+                <section className="brand-surface p-5 sm:p-7">
                     <div className="flex flex-wrap items-center gap-2">
                         <span className="text-xs font-medium text-slate-500">INC-{String(incident.id).padStart(4, '0')}</span>
                         <StatusBadge status={incident.status} />
@@ -95,10 +95,10 @@ export default function Show({ incident, logs, comments, success, returnUrl, sta
                     </dl>
                 </section>
 
-                <StatusActions incidentId={incident.id} actions={statusActions} error={errors?.status} />
+                <StatusActions incidentId={incident.id} status={incident.status} actions={statusActions} error={errors?.status} />
 
                 <div className="grid items-start gap-6 lg:grid-cols-2">
-                    <section aria-labelledby="history-title" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                    <section aria-labelledby="history-title" className="brand-surface p-5 sm:p-6">
                         <h2 id="history-title" className="text-lg font-semibold">Historial de cambios</h2>
                         {logs.length === 0 ? <p className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">Todavía no hay cambios registrados.</p> : (
                             <ol className="mt-5 space-y-5">
@@ -113,7 +113,7 @@ export default function Show({ incident, logs, comments, success, returnUrl, sta
                         )}
                     </section>
 
-                    <section aria-labelledby="comments-title" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                    <section aria-labelledby="comments-title" className="brand-surface p-5 sm:p-6">
                         <h2 id="comments-title" className="text-lg font-semibold">Comentarios operativos</h2>
                         {comments.length === 0 ? <p className="mt-4 rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">Todavía no hay comentarios.</p> : (
                             <ol className="mt-5 space-y-4">
@@ -125,16 +125,18 @@ export default function Show({ incident, logs, comments, success, returnUrl, sta
                         )}
 
                         <form onSubmit={submit} className="mt-6 border-t border-slate-100 pt-5">
-                            <label htmlFor="comment-body" className="block text-sm font-semibold text-slate-800">Añadir comentario</label>
-                            <textarea id="comment-body" value={form.data.body} onChange={(event) => form.setData('body', event.target.value)} rows={4} aria-invalid={Boolean(form.errors.body)} aria-describedby={form.errors.body ? 'comment-error' : undefined} className="mt-2 block w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                            <label htmlFor="comment-body" className="block text-base font-normal leading-[1.4] text-black">Añadir comentario</label>
+                            <textarea id="comment-body" value={form.data.body} onChange={(event) => form.setData('body', event.target.value)} rows={4} aria-invalid={Boolean(form.errors.body)} aria-describedby={form.errors.body ? 'comment-error' : undefined} className="brand-field mt-2 min-h-28 resize-y" />
                             {form.errors.body && <p id="comment-error" role="alert" className="mt-2 text-sm text-rose-700">{form.errors.body}</p>}
                             {form.errors.incident_id && <p role="alert" className="mt-2 text-sm text-rose-700">No se pudo identificar la incidencia.</p>}
-                            <button type="submit" disabled={form.processing} className="mt-3 rounded-lg bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-60">{form.processing ? 'Enviando…' : 'Añadir comentario'}</button>
+                            <button type="submit" disabled={form.processing} className="brand-button mt-3">{form.processing ? 'Enviando…' : 'Añadir comentario'}</button>
                         </form>
                     </section>
                 </div>
-                <footer className="pb-2 text-center text-xs text-slate-600">Panel operativo · Entorno de demostración</footer>
             </div>
+            <footer className="mt-7 w-full bg-gradient-to-r from-brand-secondary to-brand-primary px-3 py-3 text-center text-xs text-white">
+                Panel operativo · Entorno de demostración
+            </footer>
         </main>
     );
 }

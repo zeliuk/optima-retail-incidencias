@@ -36,10 +36,10 @@ function IncidentRow({ incident }: { incident: Incident }) {
     const contactLabel = incident.assigned_to ? 'Responsable' : 'Solicitante';
 
     return (
-        <tr className="group transition hover:bg-slate-50/80">
+        <tr className="group bg-white transition hover:bg-slate-50">
             <td className="px-6 py-4">
                 <div className="max-w-lg">
-                    <Link href={detailUrl(incident.id)} className="font-semibold text-slate-900 decoration-indigo-400 underline-offset-4 hover:text-indigo-700 hover:underline">
+                    <Link href={detailUrl(incident.id)} className="font-semibold text-slate-900 decoration-brand-blue underline-offset-4 hover:text-brand-primary hover:underline">
                         {incident.title}
                     </Link>
                     <p className="mt-1 text-xs text-slate-500">INC-{String(incident.id).padStart(4, '0')}</p>
@@ -53,7 +53,7 @@ function IncidentRow({ incident }: { incident: Incident }) {
                 <p className="mt-0.5 text-xs text-slate-500">{contact ? contactLabel : 'Responsable'}</p>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-right">
-                <Link href={detailUrl(incident.id)} className="inline-flex items-center gap-1 text-sm font-semibold text-indigo-700 hover:text-indigo-900">
+                <Link href={detailUrl(incident.id)} className="inline-flex items-center gap-1 text-sm font-semibold text-brand-primary hover:text-brand-secondary">
                     Ver detalle <span aria-hidden="true">→</span>
                 </Link>
             </td>
@@ -66,13 +66,13 @@ function IncidentCard({ incident }: { incident: Incident }) {
     const contactLabel = incident.assigned_to ? 'Responsable' : 'Solicitante';
 
     return (
-        <article className="p-4 sm:p-5">
+        <article className="rounded-[20px] border border-slate-200 bg-white p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-medium text-slate-500">INC-{String(incident.id).padStart(4, '0')}</span>
                 <StatusBadge status={incident.status} />
             </div>
             <h3 className="mt-3 font-semibold leading-6 text-slate-900">
-                <Link href={detailUrl(incident.id)} className="hover:text-indigo-700">{incident.title}</Link>
+                <Link href={detailUrl(incident.id)} className="hover:text-brand-primary">{incident.title}</Link>
             </h3>
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <PriorityBadge priority={incident.priority} />
@@ -83,7 +83,7 @@ function IncidentCard({ incident }: { incident: Incident }) {
                     <p className="text-sm font-medium text-slate-700">{contact || 'Sin asignar'}</p>
                     <p className="text-xs text-slate-500">{contact ? contactLabel : 'Responsable'}</p>
                 </div>
-                <Link href={detailUrl(incident.id)} className="text-sm font-semibold text-indigo-700">Ver detalle <span aria-hidden="true">→</span></Link>
+                <Link href={detailUrl(incident.id)} className="text-sm font-semibold text-brand-primary">Ver detalle <span aria-hidden="true">→</span></Link>
             </div>
         </article>
     );
@@ -129,19 +129,13 @@ export default function Index({ incidents, filters: serverFilters, success }: In
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 text-slate-900">
-            <header className="border-b border-slate-200 bg-white">
-                <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-                    <div className="flex items-center gap-3">
-                        <div aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-xl bg-indigo-700 text-sm font-bold tracking-tight text-white shadow-sm">OR</div>
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">Optima Retail</p>
-                            <h1 className="mt-0.5 text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">Panel operativo de incidencias</h1>
-                        </div>
-                    </div>
-                    <div className="flex items-center justify-between gap-4 sm:justify-end">
-                        <p className="max-w-xs text-sm text-slate-500">Seguimiento y coordinación de incidencias operativas.</p>
-                        <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">Carlos Turmo · Demo</span>
+        <main className="min-h-screen bg-white text-slate-900">
+            <header className="bg-gradient-to-b from-white via-white/95 to-transparent pt-2 pb-3 md:sticky md:top-0 md:z-30">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex min-h-[67px] items-center rounded-full bg-[#f6f6f6] px-5 py-2.5 sm:px-[35px]">
+                        <Link href="/incidents" aria-label="Ir al listado de incidencias" className="inline-flex rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary">
+                            <img src="/images/optima-retail-logo.svg" alt="" className="h-auto w-[250px] max-w-full shrink-0" />
+                        </Link>
                     </div>
                 </div>
             </header>
@@ -149,7 +143,7 @@ export default function Index({ incidents, filters: serverFilters, success }: In
             <div className="mx-auto max-w-7xl space-y-7 px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
                 <section className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <p className="text-sm font-semibold text-indigo-700">Centro de operaciones</p>
+                        <p className="text-sm font-semibold text-brand-primary">Centro de operaciones</p>
                         <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Incidencias</h2>
                         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">Consulta el estado y la prioridad de las incidencias registradas.</p>
                     </div>
@@ -175,7 +169,7 @@ export default function Index({ incidents, filters: serverFilters, success }: In
 
                 {success && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">{success}</p>}
 
-                <section aria-labelledby="incident-list-title" className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <section aria-labelledby="incident-list-title" className="brand-surface overflow-hidden">
                     <div className="flex flex-col gap-1 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                         <div>
                             <h2 id="incident-list-title" className="font-semibold text-slate-900">Listado de incidencias</h2>
@@ -188,7 +182,7 @@ export default function Index({ incidents, filters: serverFilters, success }: In
                         <>
                             <div className="hidden overflow-x-auto md:block">
                                 <table className="w-full min-w-[850px] text-left">
-                                    <thead className="bg-slate-50/80 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                    <thead className="bg-white/70 text-xs font-semibold uppercase tracking-wide text-slate-500">
                                         <tr>
                                             <th scope="col" className="px-6 py-3">Incidencia</th>
                                             <th scope="col" className="px-6 py-3">Prioridad</th>
@@ -198,12 +192,12 @@ export default function Index({ incidents, filters: serverFilters, success }: In
                                             <th scope="col" className="px-6 py-3 text-right">Acción</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100">
+                                    <tbody className="divide-y divide-slate-200">
                                         {incidents.data.map((incident) => <IncidentRow key={incident.id} incident={incident} />)}
                                     </tbody>
                                 </table>
                             </div>
-                            <div className="divide-y divide-slate-100 md:hidden">
+                            <div className="space-y-3 p-4 md:hidden">
                                 {incidents.data.map((incident) => <IncidentCard key={incident.id} incident={incident} />)}
                             </div>
                             <Pagination links={incidents.links} />
@@ -213,8 +207,10 @@ export default function Index({ incidents, filters: serverFilters, success }: In
 
                 <CreateIncidentForm />
 
-                <footer className="pb-2 text-center text-xs text-slate-600">Panel operativo · Entorno de demostración</footer>
             </div>
+            <footer className="mt-7 w-full bg-gradient-to-r from-brand-secondary to-brand-primary px-3 py-3 text-center text-xs text-white">
+                Panel operativo · Entorno de demostración
+            </footer>
         </main>
     );
 }

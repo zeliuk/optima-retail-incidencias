@@ -46,7 +46,7 @@ const priorityStyles: Record<string, string> = {
 };
 
 function Badge({ children, className }: { children: ReactNode; className: string }) {
-    return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${className}`}>{children}</span>;
+    return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-sm font-semibold ${className}`}>{children}</span>;
 }
 
 export function StatusBadge({ status }: { status: string }) {
@@ -69,7 +69,7 @@ export function StatusSummary({ incidents }: { incidents: Incident[] }) {
         <section aria-labelledby="summary-title" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <h2 id="summary-title" className="sr-only">Resumen de incidencias por estado</h2>
             {items.map((item) => (
-                <article key={item.key} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                <article key={item.key} className="brand-surface p-4 sm:p-5">
                     <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
                         <span aria-hidden="true" className={`size-2 rounded-full ${item.marker}`} />
                         {item.label}
@@ -100,7 +100,6 @@ export function Pagination({ links }: { links: PaginationLink[] }) {
 
     return (
         <nav aria-label="Paginación de incidencias" className="flex flex-wrap items-center justify-center gap-2 border-t border-slate-100 px-4 py-4 sm:justify-between sm:px-6">
-            <p className="hidden text-sm text-slate-500 sm:block">Navega por las páginas de incidencias</p>
             <div className="flex flex-wrap justify-center gap-1.5">
                 {links.map((link, index) => {
                     const isPrevious = index === 0;
@@ -113,7 +112,7 @@ export function Pagination({ links }: { links: PaginationLink[] }) {
                             preserveScroll
                             aria-current={link.active ? 'page' : undefined}
                             aria-label={isPrevious || isNext ? label : `Página ${label}`}
-                            className={`min-w-9 rounded-lg px-3 py-2 text-center text-sm font-medium transition ${link.active ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'} ${isPrevious || isNext ? '' : 'hidden sm:block'}`}
+                            className={`min-w-9 rounded-lg px-3 py-2 text-center text-sm font-medium transition ${link.active ? 'bg-brand-primary text-white' : 'text-slate-600 hover:bg-slate-100'} ${isPrevious || isNext ? '' : 'hidden sm:block'}`}
                         >
                             {label}
                         </Link>
